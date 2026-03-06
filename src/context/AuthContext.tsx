@@ -26,11 +26,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return unsubscribe;
+    // Fallback timeout: if Firebase auth doesn't resolve in 10 s, stop loading
+    const timeout = setTimeout(() => setLoading(false), 10_000);
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (u) => {
+        clearTimeout(timeout);
+        setUser(u);
+        setLoading(false);
+      },
+      (err) => {
+        // Auth error – stop loading so the app doesn't hang
+        clearTimeout(timeout);
+        setError(err instanceof Error ? err.message : 'Authentication service unavailable.');
+        setLoading(false);
+      },
+    );
+    return () => {
+      clearTimeout(timeout);
+      unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -67,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within AuthProvider');
