@@ -4,12 +4,17 @@
   <meta charset="UTF-8" />
   <title>PGHub</title>
   <script>
-    // GitHub Pages SPA redirect: store the path and redirect to index
+    // GitHub Pages SPA redirect: encode the path into the query string and
+    // redirect to the repo root so index.html can restore the correct route.
+    // segmentCount = 1 preserves the first path segment (/PGHub/).
+    var segmentCount = 1;
     var l = window.location;
+    var pathParts = l.pathname.slice(1).split('/');
     l.replace(
-      l.protocol + '//' + l.host + l.pathname.split('/').slice(0, 2).join('/') +
-      '/?p=/' + l.pathname.slice(1).replace(/&/g, '~and~') +
-      (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+      l.protocol + '//' + l.host + '/' +
+      pathParts.slice(0, segmentCount).join('/') + '/' +
+      '?/' + pathParts.slice(segmentCount).join('/').replace(/&/g, '~and~') +
+      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
       l.hash
     );
   </script>
