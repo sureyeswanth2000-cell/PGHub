@@ -15,7 +15,7 @@ A modern web application to manage Paying Guest (PG) accommodations efficiently.
 
 - React + TypeScript + Vite
 - Firebase (Auth + Firestore)
-- Material UI (MUI v5)
+- Material UI (MUI v7)
 - React Router v6
 
 ## Setup
