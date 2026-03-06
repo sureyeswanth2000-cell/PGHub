@@ -56,7 +56,7 @@ export async function deleteRoom(id: string): Promise<void> {
 // ─── BEDS ─────────────────────────────────────────────────────────────────────
 
 export async function getBeds(roomId?: string): Promise<Bed[]> {
-  let q = roomId
+  const q = roomId
     ? query(collection(db, 'beds'), where('roomId', '==', roomId), orderBy('bedNumber'))
     : query(collection(db, 'beds'), orderBy('bedNumber'));
   const snap = await getDocs(q);
@@ -99,7 +99,7 @@ export async function addBedsForRoom(roomId: string, count: number): Promise<voi
 // ─── RESIDENTS ───────────────────────────────────────────────────────────────
 
 export async function getResidents(filters?: { status?: string; roomId?: string }): Promise<Resident[]> {
-  let constraints: Parameters<typeof query>[1][] = [orderBy('name')];
+  const constraints: Parameters<typeof query>[1][] = [orderBy('name')];
   if (filters?.status) constraints.push(where('status', '==', filters.status));
   if (filters?.roomId) constraints.push(where('roomId', '==', filters.roomId));
   const snap = await getDocs(query(collection(db, 'residents'), ...constraints));
@@ -163,7 +163,7 @@ export async function deleteResident(id: string, bedId: string): Promise<void> {
 // ─── PAYMENTS ────────────────────────────────────────────────────────────────
 
 export async function getPayments(residentId?: string): Promise<Payment[]> {
-  let q = residentId
+  const q = residentId
     ? query(collection(db, 'payments'), where('residentId', '==', residentId), orderBy('dueDate', 'desc'))
     : query(collection(db, 'payments'), orderBy('dueDate', 'desc'));
   const snap = await getDocs(q);
